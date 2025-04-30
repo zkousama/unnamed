@@ -2,14 +2,19 @@ import type { VitePWAOptions } from 'vite-plugin-pwa';
 
 export const pwaConfig: Partial<VitePWAOptions> = {
   registerType: 'autoUpdate',
-  includeAssets: ['favicon.ico', 'logo192.png', 'logo512.png', 'robots.txt'],
+  includeAssets: ['favicon.ico', 'logo192.png', 'logo512.png', 'robots.txt', 'offline.html'],
   manifest: {
-    name: 'Unnamed',
+    name: 'Unnamed', // Update with your actual app name
     short_name: 'Unnamed',
     description: 'Unnamed description',
     theme_color: '#000000',
     background_color: '#ffffff',
     icons: [
+      {
+        src: 'favicon.ico',
+        sizes: '64x64 32x32 24x24 16x16',
+        type: 'image/x-icon'
+      },
       {
         src: 'logo192.png',
         sizes: '192x192',
@@ -21,13 +26,19 @@ export const pwaConfig: Partial<VitePWAOptions> = {
         type: 'image/png',
         purpose: 'any maskable'
       }
-    ]
+    ],
+    start_url: '/',
+    display: 'standalone',
+    orientation: 'portrait',
+    scope: '/'
   },
   devOptions: {
-    enabled: true
+    enabled: true // Enable PWA in development
   },
   workbox: {
     globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+    navigateFallback: 'offline.html',
+    navigateFallbackDenylist: [/^\/api\//, /^\/admin\//],
     runtimeCaching: [
       {
         urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

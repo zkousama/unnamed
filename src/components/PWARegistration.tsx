@@ -4,18 +4,30 @@ import { registerSW } from 'virtual:pwa-register';
 export function PWARegistration() {
   const [needRefresh, setNeedRefresh] = useState(false);
   const [offlineReady, setOfflineReady] = useState(false);
+  const [updateSW, setUpdateSW] = useState<(() => Promise<void>) | null>(null);
 
   useEffect(() => {
-    const updateSW = registerSW({
-      onNeedRefresh() {
-        setNeedRefresh(true);
-      },
-      onOfflineReady() {
-        setOfflineReady(true);
-      },
-    });
+    const registerServiceWorker = async () => {
+      try {
+        // Register the service worker
+        const update = registerSW({
+          onNeedRefresh() {
+            setNeedRefresh(true);
+          },
+          onOfflineReady() {
+            setOfflineReady(true);
+          },
+        });
+        
+        setUpdateSW(() => update);
+      } catch (error) {
+        console.error('Error registering service worker:', error);
+      }
+    };
 
-    // Auto hide the refresh notification after 5 seconds
+    registerServiceWorker();
+
+    // Auto hide the offline notification after 5 seconds
     if (offlineReady) {
       const timer = setTimeout(() => setOfflineReady(false), 5000);
       return () => clearTimeout(timer);
@@ -33,8 +45,13 @@ export function PWARegistration() {
     setNeedRefresh(false);
   };
 
-  const refresh = () => {
-    window.location.reload();
+  const refresh = async () => {
+    if (updateSW) {
+      await updateSW();
+      window.location.reload();
+    } else {
+      window.location.reload();
+    }
   };
 
   return (
