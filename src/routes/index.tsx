@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-
-import { useSession, signIn } from "@/lib/auth-client";
-import { Button } from "@/components/ui/button";
+import { useSession } from "@/lib/auth-client";
+import { AuthTabs } from "@/components/AuthTabs";
 
 export const Route = createFileRoute("/")({
   component: App,
@@ -9,17 +8,21 @@ export const Route = createFileRoute("/")({
 
 function App() {
   const { data: session } = useSession();
+  
   return (
-    <div className="p-5 flex flex-col gap-2">
-      <div className="flex flex-row gap-2">
-        {session && <Link to="/dashboard">Dashboard</Link>}
-        {!session && (
-          <Button onClick={() => signIn.social({ provider: "google" })}>
-            Sign in with Google
-          </Button>
-        )}
-      </div>
-      {session && <p>Client signed in as {session.user.name}</p>}
+    <div className="p-5 flex flex-col gap-4">
+      {session ? (
+        <div className="flex flex-col gap-2">
+          <Link to="/dashboard" className="text-blue-500 hover:underline">
+            Go to Dashboard
+          </Link>
+          <p>Signed in as {session.user.name}</p>
+        </div>
+      ) : (
+        <div className="w-full max-w-md mx-auto">
+          <AuthTabs />
+        </div>
+      )}
     </div>
   );
 }

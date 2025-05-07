@@ -3,22 +3,40 @@ import viteTsConfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { pwaConfig } from './vite-pwa-config'
+import { createTanStackServerFnPlugin } from '@tanstack/server-functions-plugin'
 
-const config = defineConfig({
+const serverFnsPlugin = createTanStackServerFnPlugin({
+  manifestVirtualImportId: 'tsr:server-fn-manifest',
+  client: {
+    getRuntimeCode: () =>
+      `import { createClientRpc } from '@tanstack/react-start/client-runtime'`,
+    replacer: (opts) => `createClientRpc(${JSON.stringify(opts.functionId)})`,
+  },
+  ssr: {
+    getRuntimeCode: () =>
+      `import { createSsrRpc } from '@tanstack/react-start/ssr-runtime'`,
+    replacer: (opts) => `createSsrRpc(${JSON.stringify(opts.functionId)})`,
+  },
+  server: {
+    getRuntimeCode: () =>
+      `import { createServerRpc } from '@tanstack/react-start/server-runtime'`,
+    replacer: (opts) =>
+      `createServerRpc(${JSON.stringify(opts.functionId)}, ${opts.fn})`,
+  },
+})
+
+export default defineConfig({
   tsr: {
     appDirectory: 'src',
   },
   vite: {
     plugins: [
-      // this is the plugin that enables path aliases
-      viteTsConfigPaths({
-        projects: ['./tsconfig.json'],
-      }),
+      viteTsConfigPaths({ projects: ['./tsconfig.json'] }),
       tailwindcss(),
-      // Add the PWA plugin with centralized config
-      VitePWA(pwaConfig)
+      VitePWA(pwaConfig),
+      serverFnsPlugin.client,
+      serverFnsPlugin.ssr,
+      serverFnsPlugin.server,
     ],
   },
 })
-
-export default config
