@@ -35,7 +35,7 @@ export function SignInForm() {
       if (result.error) throw new Error(result.error.message);
       return result.data;
     },
-    onSuccess: () => navigate({ to: "/dashboard" }),
+    onSuccess: () => navigate({ to: "/" }),
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -148,7 +148,7 @@ export function SignUpForm() {
       if (result.error) throw new Error(result.error.message);
       return result.data;
     },
-    onSuccess: () => navigate({ to: "/dashboard" }),
+    onSuccess: () => navigate({ to: "/" }),
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -40,12 +40,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'Your App Name' },
-      { name: 'description', content: 'Your app description here' },
+      { title: 'Unnamed' },
+      { name: 'description', content: "Unnamed's description" },
       { name: 'theme-color', content: '#000000' },
       { name: 'apple-mobile-web-app-capable', content: 'yes' },
       { name: 'apple-mobile-web-app-status-bar-style', content: 'black' },
-      { name: 'apple-mobile-web-app-title', content: 'Your App Name' },
+      { name: 'apple-mobile-web-app-title', content: 'Unnamed' },
     ],
     links: [
       { rel: 'manifest', href: '/manifest.json', type: 'application/manifest+json' },
